@@ -13,5 +13,4 @@ sequenceDiagram
     activate server
     Note over server: Receives form data and saves it
     deactivate server
-    end
 ```
