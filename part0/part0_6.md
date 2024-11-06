@@ -8,10 +8,10 @@ sequenceDiagram
     activate browser
     Note over user: scrolls the page until they see the form<br/>fills data of the Note in "input" then <br/>press "Save" button
     user->>browser: Submits Note
-    browser->>server: POST: https://studies.cs.helsinki.fi/exampleapp/new_note
-    deactivate browser
+    browser->>server: POST: https://studies.cs.helsinki.fi/exampleapp/new_note_spa
     activate server
-    Note over server: Receives form data and saves it
+    Note over server: Receives JSON data and saves it
     server->>browser: Sends response
     deactivate server
+    deactivate browser
 ```
