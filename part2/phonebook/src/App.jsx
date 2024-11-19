@@ -1,23 +1,46 @@
-import axios from "axios";
 import { useEffect, useState } from 'react'
 
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
+import personsService from "./services/persons"
 
 const App = () => {
 
-  const getPersons = () => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then(({ data }) => setPersons(data))
+  const updatePhone = (id, phoneNumber) => {
+    // TODO: Implement exercise 2.15
   }
 
-  useEffect(getPersons, [])
-  const [persons, setPersons] = useState([])
-  const [newName, setNewName] = useState('')
-  const [newNumber, setNewNumber] = useState('')
-  const [searchField, setSearchField] = useState('')
+  const deletePerson = (id) => {
+    const personToDelete = persons.find(person => person.id === id);
+    if (!personToDelete) {
+      alert(`the person was not found in server`)
+      return;
+    }
+
+    if (window.confirm(`Delete ${personToDelete.name}?`)) {
+      personsService
+        .deleteRegister(id)
+        .then(personDeleted => {
+          setPersons(persons.filter(person => person.id !== personDeleted.id))
+        })
+        .catch(error => {
+          alert(`the person '${personToDelete.name}' was already deleted from server`)
+          setPersons([...persons])
+        })
+    }
+  }
+
+  const getPersons = () => {
+    personsService.readAll()
+      .then((personsObtained) => setPersons(personsObtained))
+  }
+
+  useEffect(getPersons, []);
+  const [persons, setPersons] = useState([]);
+  const [newName, setNewName] = useState('');
+  const [newNumber, setNewNumber] = useState('');
+  const [searchField, setSearchField] = useState('');
 
   const handleNameChange = (event) => setNewName(event.target.value);
   const handleNumberChange = (event) => setNewNumber(event.target.value);
@@ -44,10 +67,19 @@ const App = () => {
       alert(`${newName} is already added to phonebook`)
       return;
     }
+    const newPerson = { name: newName, number: newNumber };
 
-    setPersons(persons.concat({ name: newName, number: newNumber, id: persons.length + 1 }))
-    setNewName('')
-    setNewNumber('')
+    personsService
+      .create(newPerson)
+      .then(returnedPerson => {
+        setPersons(persons.concat(returnedPerson));
+        setNewName('')
+        setNewNumber('')
+      }).catch(error => {
+        alert(`${newName} could not be added to phonebook`);
+        console.error(error)
+        setPersons([...persons]);
+      })
   }
 
   return (
@@ -59,7 +91,7 @@ const App = () => {
         newNumber={newNumber} handleNumberChange={handleNumberChange}
         handleClick={handleClick} />
       <h3>Numbers</h3>
-      <Persons persons={personsToShow} />
+      <Persons persons={personsToShow} deletePerson={deletePerson} />
     </div>
   )
 }
