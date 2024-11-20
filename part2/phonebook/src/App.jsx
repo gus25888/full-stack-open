@@ -63,12 +63,45 @@ const App = () => {
       return;
     }
 
-    if (persons.map(person => person.name).includes(newName)) {
-      alert(`${newName} is already added to phonebook`)
+    const indexPersonFound = persons.map(person => person.name).indexOf(newName);
+    // if a Person is found, asks for update their number.
+    if (indexPersonFound > -1) {
+      if (confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
+        updatePerson(indexPersonFound, newNumber);
+      }
       return;
     }
-    const newPerson = { name: newName, number: newNumber };
 
+    const newPerson = { name: newName, number: newNumber };
+    createPerson(newPerson)
+  }
+
+  const updatePerson = (indexPerson, newNumber) => {
+
+    const personFound = persons.at(indexPerson);
+
+    if (personFound) {
+      const personToUpdate = { ...personFound, number: newNumber }
+
+      personsService
+        .update(personToUpdate.id, personToUpdate)
+        .then(returnedPerson => {
+
+          const personsCopy = [...persons];
+          personsCopy[indexPerson] = returnedPerson;
+
+          setPersons(personsCopy);
+          setNewName('')
+          setNewNumber('')
+        }).catch(error => {
+          alert(`${newName} could not be added to phonebook`);
+          console.error(error)
+          setPersons([...persons]);
+        })
+    }
+  }
+
+  const createPerson = (newPerson) => {
     personsService
       .create(newPerson)
       .then(returnedPerson => {
