@@ -1,15 +1,33 @@
 import { useEffect, useState } from 'react'
 
+import personsService from "./services/persons"
+
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
-import personsService from "./services/persons"
+import Notification from "./components/Notification";
+
+const messageTypes = {
+  SUCCESS: 'success',
+  ERROR: 'error'
+}
 
 const App = () => {
 
-  const updatePhone = (id, phoneNumber) => {
-    // TODO: Implement exercise 2.15
-  }
+  /* ****************** Hooks ****************** */
+  const [persons, setPersons] = useState([]);
+  const [newName, setNewName] = useState('');
+  const [newNumber, setNewNumber] = useState('');
+  const [searchField, setSearchField] = useState('');
+  const [messageText, setMessageText] = useState(null);
+  const [messageType, setMessageType] = useState('');
+
+
+  /* ****************** Functions ****************** */
+
+  const getPersons = () => { personsService.readAll().then((personsList) => setPersons(personsList)) }
+
+  useEffect(getPersons, []);
 
   const deletePerson = (id) => {
     const personToDelete = persons.find(person => person.id === id);
@@ -31,16 +49,47 @@ const App = () => {
     }
   }
 
-  const getPersons = () => {
-    personsService.readAll()
-      .then((personsObtained) => setPersons(personsObtained))
+
+  const updatePerson = (indexPerson, newNumber) => {
+
+    const personFound = persons.at(indexPerson);
+
+    if (personFound) {
+      const personToUpdate = { ...personFound, number: newNumber }
+
+      personsService
+        .update(personToUpdate.id, personToUpdate)
+        .then(returnedPerson => {
+
+          const personsCopy = [...persons];
+          personsCopy[indexPerson] = returnedPerson;
+
+          setPersons(personsCopy);
+          setNewName('')
+          setNewNumber('')
+          showMessage(`updated ${returnedPerson.name} number`, messageTypes.SUCCESS)
+        }).catch(error => {
+          alert(`${newName} could not be added to phonebook`);
+          console.error(error)
+          setPersons([...persons]);
+        })
+    }
   }
 
-  useEffect(getPersons, []);
-  const [persons, setPersons] = useState([]);
-  const [newName, setNewName] = useState('');
-  const [newNumber, setNewNumber] = useState('');
-  const [searchField, setSearchField] = useState('');
+  const createPerson = (newPerson) => {
+    personsService
+      .create(newPerson)
+      .then(returnedPerson => {
+        setPersons(persons.concat(returnedPerson));
+        setNewName('')
+        setNewNumber('')
+        showMessage(`added ${returnedPerson.name}`, messageTypes.SUCCESS)
+      }).catch(error => {
+        alert(`${newName} could not be added to phonebook`);
+        console.error(error)
+        setPersons([...persons]);
+      })
+  }
 
   const handleNameChange = (event) => setNewName(event.target.value);
   const handleNumberChange = (event) => setNewNumber(event.target.value);
@@ -76,48 +125,17 @@ const App = () => {
     createPerson(newPerson)
   }
 
-  const updatePerson = (indexPerson, newNumber) => {
 
-    const personFound = persons.at(indexPerson);
-
-    if (personFound) {
-      const personToUpdate = { ...personFound, number: newNumber }
-
-      personsService
-        .update(personToUpdate.id, personToUpdate)
-        .then(returnedPerson => {
-
-          const personsCopy = [...persons];
-          personsCopy[indexPerson] = returnedPerson;
-
-          setPersons(personsCopy);
-          setNewName('')
-          setNewNumber('')
-        }).catch(error => {
-          alert(`${newName} could not be added to phonebook`);
-          console.error(error)
-          setPersons([...persons]);
-        })
-    }
-  }
-
-  const createPerson = (newPerson) => {
-    personsService
-      .create(newPerson)
-      .then(returnedPerson => {
-        setPersons(persons.concat(returnedPerson));
-        setNewName('')
-        setNewNumber('')
-      }).catch(error => {
-        alert(`${newName} could not be added to phonebook`);
-        console.error(error)
-        setPersons([...persons]);
-      })
+  const showMessage = (message, type) => {
+    setMessageText(message)
+    setMessageType(type)
+    setTimeout(() => setMessageText(null), 5000)
   }
 
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification text={messageText} type={messageType} />
       <Filter searchField={searchField} handleSearchFieldChange={handleSearchFieldChange} />
       <h3>add a new</h3>
       <PersonForm newName={newName} handleNameChange={handleNameChange}
