@@ -32,7 +32,7 @@ const App = () => {
   const deletePerson = (id) => {
     const personToDelete = persons.find(person => person.id === id);
     if (!personToDelete) {
-      alert(`the person was not found in server`)
+      showMessage(`the person was not found in server`, messageTypes.ERROR);
       return;
     }
 
@@ -43,8 +43,8 @@ const App = () => {
           setPersons(persons.filter(person => person.id !== personDeleted.id))
         })
         .catch(error => {
-          alert(`the person '${personToDelete.name}' was already deleted from server`)
-          setPersons([...persons])
+          showMessage(`the person '${personToDelete.name}' was already deleted from server`, messageTypes.ERROR);
+          setPersons(persons.filter(person => person.id !== personToDelete.id))
         })
     }
   }
@@ -69,7 +69,7 @@ const App = () => {
           setNewNumber('')
           showMessage(`updated ${returnedPerson.name} number`, messageTypes.SUCCESS)
         }).catch(error => {
-          alert(`${newName} could not be added to phonebook`);
+          showMessage(`${newName}'s number could not be added to phonebook`, messageTypes.ERROR);
           console.error(error)
           setPersons([...persons]);
         })
@@ -85,7 +85,7 @@ const App = () => {
         setNewNumber('')
         showMessage(`added ${returnedPerson.name}`, messageTypes.SUCCESS)
       }).catch(error => {
-        alert(`${newName} could not be added to phonebook`);
+        showMessage(`${newName} could not be added to phonebook`, messageTypes.ERROR);
         console.error(error)
         setPersons([...persons]);
       })
@@ -148,4 +148,3 @@ const App = () => {
 }
 
 export default App
-
