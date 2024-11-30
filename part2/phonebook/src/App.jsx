@@ -39,11 +39,12 @@ const App = () => {
     if (window.confirm(`Delete ${personToDelete.name}?`)) {
       personsService
         .deleteRegister(id)
-        .then(personDeleted => {
-          setPersons(persons.filter(person => person.id !== personDeleted.id))
+        .then(() => {
+          setPersons(persons.filter(person => person.id !== personToDelete.id))
         })
         .catch(error => {
           showMessage(`the person '${personToDelete.name}' was already deleted from server`, messageTypes.ERROR);
+          console.error(error)
           setPersons(persons.filter(person => person.id !== personToDelete.id))
         })
     }
