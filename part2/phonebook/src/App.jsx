@@ -70,7 +70,7 @@ const App = () => {
           setNewNumber('')
           showMessage(`updated ${returnedPerson.name} number`, messageTypes.SUCCESS)
         }).catch(error => {
-          showMessage(`${newName}'s number could not be added to phonebook`, messageTypes.ERROR);
+          showMessage(`${error.response.data.error}`, messageTypes.ERROR);
           console.error(error)
           setPersons([...persons]);
         })
@@ -86,7 +86,7 @@ const App = () => {
         setNewNumber('')
         showMessage(`added ${returnedPerson.name}`, messageTypes.SUCCESS)
       }).catch(error => {
-        showMessage(`${newName} could not be added to phonebook`, messageTypes.ERROR);
+        showMessage(`${error.response.data.error}`, messageTypes.ERROR);
         console.error(error)
         setPersons([...persons]);
       })
