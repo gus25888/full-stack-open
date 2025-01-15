@@ -6,9 +6,9 @@ const Notification = () => {
     border: 'solid',
     padding: 10,
     borderWidth: 1,
-    color: 'green',
-    borderColor: 'darkgreen',
-    backgroundColor: 'lightyellow',
+    color: 'black',
+    borderColor: 'black',
+    backgroundColor: 'lightgray',
     marginBottom: 10,
     marginTop: 10,
     display: (notification) ? 'block' : 'none'

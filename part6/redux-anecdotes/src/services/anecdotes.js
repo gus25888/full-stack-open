@@ -19,11 +19,7 @@ const create = async (content) => {
       throw new Error(`content must have a value`)
     }
 
-
-    const anecdote = {
-      content,
-      votes: 0
-    }
+    const anecdote = { content, votes: 0 }
     const response = await axios.post(baseUrl, anecdote)
     return response.data
   } catch (error) {
@@ -32,4 +28,14 @@ const create = async (content) => {
   }
 }
 
-export default { create, getAll }
+const updateData = async (anecdote) => {
+  try {
+    const response = await axios.put(`${baseUrl}/${anecdote.id}`, anecdote)
+    return response.data
+  } catch (error) {
+    console.error(error)
+    return
+  }
+}
+
+export default { create, getAll, updateData }
