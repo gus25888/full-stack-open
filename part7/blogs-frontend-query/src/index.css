@@ -1,0 +1,63 @@
+.notification {
+  width: 50%;
+}
+
+.success {
+  color: green;
+  background: lightgrey;
+  font-size: 20px;
+  border-style: solid;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.error {
+  color: red;
+  background: lightgrey;
+  font-size: 20px;
+  border-style: solid;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+form.blogForm {
+  margin-left: 5px;
+  margin-bottom: 30px;
+}
+
+form.blogForm label {
+  display: inline-block;
+  margin-right: 5px;
+  width: 50px;
+}
+
+div.blog {
+  border: 1px solid deepskyblue;
+  padding-bottom: 5px;
+}
+
+div.blogTitle {
+  font-weight: bold;
+}
+
+div.blogTitle button {
+  margin-left: 5px;
+}
+
+div.blogDetails a {
+  display: block;
+}
+
+div.blogDetails span.likes {
+  display: inline;
+  margin-left: 3px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  font-weight: bolder;
+}
+
+div.blogDetails span.user {
+  display: block;
+}
