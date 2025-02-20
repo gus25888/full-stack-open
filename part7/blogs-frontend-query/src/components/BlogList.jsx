@@ -1,6 +1,0 @@
-
-const BlogList = () => {
-  return <>
-
-  </>
-}

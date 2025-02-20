@@ -1,8 +1,6 @@
-import { useContext, useState } from 'react'
+import { useState } from 'react'
 import { login } from '../reducers/loginReducer'
-import LoginContext from '../contexts/LoginContext'
 
-// const LoginForm = ({  handleLogin, }) => {
 const LoginForm = ({ userDispatch }) => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -14,7 +12,7 @@ const LoginForm = ({ userDispatch }) => {
       setUsername('')
       setPassword('')
     } catch (exception) {
-      // showMessage('wrong username or password', notificationTypes.ERROR)
+      alert('wrong username or password')
       console.error(exception)
     }
   }

@@ -7,27 +7,6 @@ const ACTION_TYPES = {
   SET: 1,
   REMOVE: 0,
 }
-// const loginReducer = (state, action) => {
-//   if (action.type === ACTION_TYPES.SET) {
-//     (state, action) => {
-//       console.log('setUser encontrado')
-
-//       state = { ...action.payload }
-//       return state
-//     }
-//   } else if (action.type === ACTION_TYPES.REMOVE) {
-//     (state, action) => {
-//       console.log('removeUser encontrado')
-//       state = {}
-//       return state
-//     }
-//   } else {
-//     console.log('default action')
-//     console.log(action)
-
-//     return state
-//   }
-// }
 
 const loginReducer = (state, action) => {
   const actionType = action.type
@@ -48,8 +27,6 @@ const loginReducer = (state, action) => {
 
 export const setUserSession = (userDispatch) => {
   const loggedUserJSON = window.localStorage.getItem(USER_LOGIN)
-  console.log(loggedUserJSON)
-
   if (loggedUserJSON) {
     const user = JSON.parse(loggedUserJSON)
     blogService.setToken(user.token)

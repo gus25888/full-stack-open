@@ -1,4 +1,4 @@
-import { createContext, useContext, useReducer } from 'react'
+import { createContext, useReducer } from 'react'
 
 import loginReducer from '../reducers/loginReducer'
 
@@ -13,15 +13,5 @@ export const LoginContextProvider = (props) => {
     </LoginContext.Provider>
   )
 }
-
-// export const useLoginValue = () => {
-//   const valAndFn = useContext(LoginContext)
-//   return valAndFn[0]
-// }
-
-// export const useLoginDispatch = () => {
-//   const valAndFn = useContext(LoginContext)
-//   return valAndFn[1]
-// }
 
 export default LoginContext
