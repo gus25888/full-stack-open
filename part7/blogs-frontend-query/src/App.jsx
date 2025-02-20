@@ -1,47 +1,89 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useContext } from 'react'
+import { useQueryClient, useMutation, useQuery } from '@tanstack/react-query'
 
 import blogService from './services/blogs'
 import loginService from './services/login'
+
 import Blog from './components/Blog'
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
 import Notification from './components/Notification'
 import Toggable from './components/Toggable'
 
-import { useNotificationDispatch, useNotificationTypes } from './contexts/notificationContext'
+import { useNotificationDispatch, useNotificationTypes } from './contexts/NotificationContext'
+import LoginContext from './contexts/LoginContext'
+import { setUserSession, logout } from './reducers/loginReducer'
 
 const App = () => {
-  const USER_LOGIN = 'blogListUser'
+  const [user, userDispatch] = useContext(LoginContext)
 
   /* ********* Refs   ********* */
 
   const blogFormRef = useRef()
-  /* ********* States ********* */
-
-  const [blogs, setBlogs] = useState(null)
-  const [user, setUser] = useState(null)
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
 
   /* *********  Effects  ********* */
 
   useEffect(() => {
-    blogService.getAll().then((blogsObtained) => setBlogs(blogsObtained))
+    setUserSession(userDispatch)
   }, [])
 
-  useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem(USER_LOGIN)
-    if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON)
-      blogService.setToken(user.token)
-      setUser(user)
+  /* ******** queryClient ******** */
+
+  const queryClient = useQueryClient()
+
+  /* ******** Mutations ******** */
+
+  const createBlogMutation = useMutation({
+    mutationFn: blogService.create,
+    onSuccess: (blogCreated) => {
+      blogFormRef.current.toggleVisibility()
+      const blogs = queryClient.getQueryData(['blogs'])
+      const userId = blogCreated.user
+      blogCreated.user = { username: user.username, name: user.name, id: userId }
+      queryClient.setQueryData(['blogs'], blogs.concat(blogCreated))
+      showMessage(
+        `blog "${blogCreated.title}" by ${blogCreated.author} added`,
+        notificationTypes.SUCCESS
+      )
+    },
+    onError: (error) => {
+      const errorMessage = error.message
+      showMessage(`${errorMessage || 'server error'}`, notificationTypes.ERROR)
+      console.error(error)
     }
-  }, [])
+  })
+
+  const updateBlogMutation = useMutation({
+    mutationFn: blogService.update,
+    onSuccess: (modifiedBlog) => {
+      const blogs = queryClient.getQueryData(['blogs'])
+      queryClient.setQueryData(['blogs'], blogs.map(blog => blog.id === modifiedBlog.id ? modifiedBlog : blog))
+    },
+    onError: (error) => {
+      const errorMessage = error.message
+      showMessage(`${errorMessage || 'server error'}`, notificationTypes.ERROR)
+      console.error(error)
+    }
+  })
+
+  const deleteBlogMutation = useMutation({
+    mutationFn: blogService.deleteRegister,
+    onSuccess: () => {
+      queryClient.invalidateQueries('blogs')
+    },
+    onError: (error) => {
+      const errorMessage = error.message
+      showMessage(`${errorMessage || 'server error'}`, notificationTypes.ERROR)
+      console.error(error)
+    }
+  })
+
 
   /* ********* Functions ********* */
 
   const notificationDispatch = useNotificationDispatch()
   const notificationTypes = useNotificationTypes()
+
   const showMessage = (message, type) => {
     notificationDispatch({
       type,
@@ -50,89 +92,44 @@ const App = () => {
     setTimeout(() => notificationDispatch({ type: notificationTypes.HIDDEN }), 2000)
   }
 
-  const handleLogin = async (event) => {
-    event.preventDefault()
-    try {
-      const user = await loginService.login({ username, password })
-      window.localStorage.setItem(USER_LOGIN, JSON.stringify(user))
-      blogService.setToken(user.token)
-      setUser(user)
-      setUsername('')
-      setPassword('')
-    } catch (exception) {
-      showMessage('wrong username or password', notificationTypes.ERROR)
-      console.error(exception)
-    }
-  }
-
   const handleLogout = () => {
-    window.localStorage.removeItem(USER_LOGIN)
-    setUser(null)
+    logout(userDispatch)
   }
 
   const createBlog = async (newBlog) => {
-    try {
-      blogFormRef.current.toggleVisibility()
-      const blogCreated = await blogService.create(newBlog)
-      // Updates the userId obtained with the session data saved.
-      blogCreated.user = { ...user }
-      setBlogs(blogs.concat(blogCreated))
-      showMessage(
-        `blog "${blogCreated.title}" by ${blogCreated.author} added`,
-        notificationTypes.SUCCESS
-      )
-    } catch (exception) {
-      const errorMessage = exception.response?.data.error
-      showMessage(`${errorMessage || 'server error'}`, notificationTypes.ERROR)
-      console.error(exception)
-    }
+    createBlogMutation.mutate(newBlog)
   }
 
-  const updateBlog = async (id, blog) => {
-    try {
-      const blogUpdated = await blogService.update(id, blog)
-
-      const { id: blogId } = blogUpdated
-
-      setBlogs(blogs.filter((blog) => blog.id !== blogId).concat(blogUpdated))
-      showMessage(
-        `like to blog "${blogUpdated.title}" registered`,
-        notificationTypes.SUCCESS
-      )
-    } catch (exception) {
-      const errorMessage = exception.response?.data.error
-      showMessage(`${errorMessage || 'server error'}`, notificationTypes.ERROR)
-      console.error(exception)
-    }
+  const updateBlog = async (blog) => {
+    updateBlogMutation.mutate(blog)
   }
 
-  const deleteBlog = async (id, blog) => {
-    try {
-      await blogService.deleteRegister(id, blog)
-
-      setBlogs(blogs.filter((blog) => blog.id !== id))
-      showMessage('blog deleted', notificationTypes.SUCCESS)
-    } catch (exception) {
-      const errorMessage = exception.response?.data.error
-      showMessage(`${errorMessage || 'server error'}`, notificationTypes.ERROR)
-      console.error(exception)
-    }
+  const deleteBlog = async (id) => {
+    deleteBlogMutation.mutate(id)
   }
+
+  const result = useQuery({
+    queryKey: ['blogs'],
+    queryFn: blogService.getAll,
+    refetchOnWindowFocus: false
+  })
+
+  if (result.isLoading) {
+    return <div>loading data...</div>
+  }
+
+  const blogs = result.data
+
   /* ********* Final Display ********* */
-  if (!user) {
+  if (Object.keys(user).length === 0) {
     return (
       <div>
         <h2>Log in to application</h2>
-        {LoginForm({
-          username,
-          password,
-          handleLogin,
-          setUsername,
-          setPassword,
-        })}
+        <LoginForm userDispatch={userDispatch} />
       </div>
     )
   }
+
   return (
     <div>
       <h2>blogs</h2>

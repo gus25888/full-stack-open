@@ -21,7 +21,8 @@ const create = async (newBlog) => {
   return response.data
 }
 
-const update = async (blogId, blog) => {
+const update = async (blog) => {
+  const blogId = blog.id
   const response = await axios.put(baseUrl + '/' + blogId, blog)
 
   return response.data

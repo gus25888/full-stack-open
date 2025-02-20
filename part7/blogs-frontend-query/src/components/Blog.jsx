@@ -12,13 +12,14 @@ const Blog = ({ user, blog, updateBlog, deleteBlog }) => {
   const updateLikes = (blog) => {
     const { id, title, author, url, user } = blog
     const blogToUpdate = {
+      id,
       title,
       author,
       url,
       user: user.id,
       likes: blog.likes + 1,
     }
-    updateBlog(id, blogToUpdate)
+    updateBlog(blogToUpdate)
   }
 
   const removeBlog = (blog) => {
