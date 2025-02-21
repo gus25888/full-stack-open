@@ -2,17 +2,9 @@ import { useState } from 'react'
 import { updateBlog, deleteBlog } from '../reducers/blogReducer'
 import { useDispatch, useSelector } from 'react-redux'
 
-const Blog = ({ blog }) => {
-
+const Blog = ({ blogId }) => {
   const dispatch = useDispatch()
   const user = useSelector(({ login }) => login.user)
-
-  const [detailsVisible, setDetailsVisible] = useState(false)
-  const visibility = { display: detailsVisible ? '' : 'none' }
-
-  const toggleVisibility = () => {
-    setDetailsVisible(!detailsVisible)
-  }
 
   const updateLikes = (blog) => {
     const { id, title, author, url, user } = blog
@@ -25,23 +17,28 @@ const Blog = ({ blog }) => {
       dispatch(deleteBlog(blog.id))
     }
   }
+  const blogItems = useSelector(({ blog }) => blog)
+  const blog = blogItems.find(blogItem => blogItem.id === blogId)
+
+  if (!blog) {
+    return null
+  }
 
   return (
     <div className="blog">
       <div className="blogTitle">
-        {`"${blog.title}" by ${blog.author}`}
-        <button onClick={toggleVisibility}>
-          {detailsVisible ? 'hide' : 'show'}
-        </button>
+        <h3>{`"${blog.title}" by ${blog.author}`}</h3>
       </div>
-      <div className="blogDetails" style={visibility}>
+      <div className="blogDetails">
         <a href={blog.url}>{blog.url}</a>
-        <span className="likes">{`likes: ${blog.likes}`} </span>{' '}
+        <span className="likes">{`${blog.likes} likes`} </span>{' '}
         <button onClick={() => updateLikes(blog)}>like</button>
-        <span className="user">{blog.user.name || 'Unassigned user'}</span>
-        {blog.user.username === user.username ? (
-          <button onClick={() => removeBlog(blog)}>remove</button>
-        ) : null}
+        <span className="user">{`added by ${blog.user.name || 'Unassigned user'}`}</span>
+        {
+          blog.user.username === user.username
+            ? (<button onClick={() => removeBlog(blog)}>remove</button>)
+            : null
+        }
       </div>
     </div>
   )

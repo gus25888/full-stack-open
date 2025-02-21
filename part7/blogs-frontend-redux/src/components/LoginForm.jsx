@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { setUsername, setPassword, login } from '../reducers/loginReducer'
 
@@ -9,6 +10,8 @@ const LoginForm = () => {
   const handleLogin = (event) => {
     event.preventDefault()
     dispatch(login(username, password))
+    dispatch(setUsername(''))
+    dispatch(setPassword(''))
   }
 
   return <>

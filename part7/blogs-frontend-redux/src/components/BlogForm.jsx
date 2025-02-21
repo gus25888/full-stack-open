@@ -1,7 +1,8 @@
 import { useState } from 'react'
-import PropTypes from 'prop-types'
-import { createBlog } from '../reducers/blogReducer'
 import { useDispatch } from 'react-redux'
+import PropTypes from 'prop-types'
+
+import { createBlog } from '../reducers/blogReducer'
 
 const BlogForm = ({ user, blogFormRef }) => {
   const dispatch = useDispatch()
