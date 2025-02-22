@@ -1,9 +1,13 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
+const Comment = require('../models/comment')
 
 blogsRouter.get('/', async (request, response, next) => {
   try {
-    const result = await Blog.find({}).populate('user', { username: 1, name: 1, id: 1 })
+    const result = await Blog
+      .find({})
+      .populate('user', { username: 1, name: 1, id: 1 })
+      .populate('comments', { content: 1 })
     if (result) {
       response.json(result)
     } else {
@@ -30,6 +34,34 @@ blogsRouter.post('/', async (request, response, next) => {
 
     if (result && savedBlog) {
       response.status(201).json(savedBlog)
+    } else {
+      response.status(404).end()
+    }
+
+  } catch (exception) {
+    next(exception)
+  }
+})
+
+blogsRouter.post('/:id/comments', async (request, response, next) => {
+  try {
+    const blogId = request.params.id
+    const { content } = request.body
+    const newComment = new Comment({ content, blogId })
+    const savedComment = await newComment.save()
+
+    const blogFound = await Blog.findById(blogId)
+
+    if (!blogFound) {
+      return response.status(401).json({ error: 'id not found' })
+    }
+
+    blogFound.comments = blogFound.comments.concat(savedComment._id)
+
+    const result = await blogFound.save()
+
+    if (result && savedComment) {
+      response.status(201).json(savedComment)
     } else {
       response.status(404).end()
     }
