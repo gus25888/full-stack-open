@@ -14,7 +14,8 @@ const LoginForm = () => {
     dispatch(setPassword(''))
   }
 
-  return <>
+  return (<div>
+    <h2>Log in to application</h2>
     <form onSubmit={handleLogin}>
       <div>
         <label htmlFor="username">username</label>
@@ -38,7 +39,7 @@ const LoginForm = () => {
       </div>
       <button type="submit">Login</button>
     </form>
-  </>
+  </div>)
 }
 
 export default LoginForm

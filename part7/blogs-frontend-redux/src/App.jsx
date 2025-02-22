@@ -1,10 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-
-import {
-  BrowserRouter as Router,
-  Routes, Route, Link, useMatch
-} from 'react-router-dom'
+import { Routes, Route, useMatch } from 'react-router-dom'
 
 import BlogList from './components/BlogList'
 import LoginForm from './components/LoginForm'
@@ -12,6 +8,7 @@ import Notification from './components/Notification'
 import UserList from './components/UserList'
 import User from './components/User'
 import Blog from './components/Blog'
+import Menu from './components/Menu'
 
 import { getInitialBlogs } from './reducers/blogReducer'
 import { logout, setUserSession } from './reducers/loginReducer'
@@ -35,26 +32,15 @@ const App = () => {
   const user = useSelector(({ login }) => login.user)
 
   if (Object.keys(user).length === 0) {
-    return (
-      <div>
-        <h2>Log in to application</h2>
-        <LoginForm />
-      </div>
-    )
+    return (<LoginForm />)
   }
 
   return (
     <>
-      <div>
-        <Link style={{ paddingRight: 5 }} to='/'>Blogs</Link>
-        <Link style={{ paddingRight: 5 }} to='/users'>Users</Link>
-      </div >
+      <Menu user={user} exit={() => { dispatch(logout()) }} />
       <div>
         <h2>Blog App</h2>
         <Notification />
-        <p>
-          {user.name} logged in <button onClick={() => { dispatch(logout()) }}>logout</button>
-        </p>
       </div>
       <Routes>
         <Route path={'/'} element={<BlogList />}></Route>
