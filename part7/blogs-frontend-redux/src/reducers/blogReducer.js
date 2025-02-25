@@ -42,6 +42,25 @@ export const createBlog = (newBlog, user, blogFormRef) => {
   }
 }
 
+export const addComment = (blog, newComment) => {
+  return async (dispatch) => {
+    try {
+      const blogId = blog.id
+      const commentCreated = await blogService.createComment(blogId, newComment)
+      const blogUpdated = {
+        ...blog,
+        comments: blog.comments.concat(commentCreated)
+      }
+      dispatch(modifyBlog(blogUpdated))
+      dispatch(printSuccessMessage(`Comment added in blog "${blog.title}"`))
+    } catch (exception) {
+      const errorMessage = exception.response?.data.error
+      dispatch(printErrorMessage(`${errorMessage || 'server error'}`))
+      console.error(exception)
+    }
+  }
+}
+
 export const updateBlog = (id, blog) => {
   return async (dispatch) => {
     try {

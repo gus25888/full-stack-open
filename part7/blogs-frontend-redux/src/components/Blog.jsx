@@ -1,6 +1,7 @@
-import { useState } from 'react'
 import { updateBlog, deleteBlog } from '../reducers/blogReducer'
 import { useDispatch, useSelector } from 'react-redux'
+
+import Comments from './Comments'
 
 const Blog = ({ blogId }) => {
   const dispatch = useDispatch()
@@ -40,6 +41,7 @@ const Blog = ({ blogId }) => {
             : null
         }
       </div>
+      <Comments blog={blog} />
     </div>
   )
 }
