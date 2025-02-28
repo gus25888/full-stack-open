@@ -1,9 +1,10 @@
+import { BlogAccessDiv } from '../styles'
 
 const BlogAccess = ({ blog }) => {
   return (
-    <div className="blogAccess">
+    <BlogAccessDiv>
       <a href={`blogs/${blog.id}`}>{`"${blog.title}" by ${blog.author} - ${blog.likes} likes`}</a>
-    </div>
+    </BlogAccessDiv>
   )
 }
 

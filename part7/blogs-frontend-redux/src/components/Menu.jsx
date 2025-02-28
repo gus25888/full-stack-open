@@ -1,13 +1,14 @@
 import { Link } from 'react-router-dom'
+import { MenuDiv, Button } from '../styles'
 
 const Menu = ({ user, exit }) => (
-  <div style={{ backgroundColor: 'lightgray' }}>
-    <Link style={{ padding: 5 }} to='/'>Blogs</Link>
-    <Link style={{ padding: 5 }} to='/users'>Users</Link>
+  <MenuDiv>
+    <Link className='accessLink' to='/'>Blogs</Link>
+    <Link className='accessLink' to='/users'>Users</Link>
     <p style={{ padding: 5, display: 'inline' }}>
-      {user.name} logged in <button onClick={exit}>logout</button>
+      {user.name} logged in <Button onClick={exit}>logout</Button>
     </p>
-  </div >
+  </MenuDiv>
 )
 
 export default Menu

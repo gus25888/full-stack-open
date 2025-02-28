@@ -1,6 +1,6 @@
-import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { setUsername, setPassword, login } from '../reducers/loginReducer'
+import { Button, Form, InputText, Label } from '../styles'
 
 const LoginForm = () => {
   const dispatch = useDispatch()
@@ -16,10 +16,10 @@ const LoginForm = () => {
 
   return (<div>
     <h2>Log in to application</h2>
-    <form onSubmit={handleLogin}>
+    <Form onSubmit={handleLogin}>
       <div>
-        <label htmlFor="username">username</label>
-        <input
+        <Label htmlFor="username">username</Label>
+        <InputText
           type="text"
           value={username}
           name="username"
@@ -28,8 +28,8 @@ const LoginForm = () => {
         />
       </div>
       <div>
-        <label htmlFor="password">password</label>
-        <input
+        <Label htmlFor="password">password</Label>
+        <InputText
           type="password"
           value={password}
           name="password"
@@ -37,8 +37,8 @@ const LoginForm = () => {
           onChange={({ target }) => dispatch(setPassword(target.value))}
         />
       </div>
-      <button type="submit">Login</button>
-    </form>
+      <Button type="submit">Login</Button>
+    </Form>
   </div>)
 }
 

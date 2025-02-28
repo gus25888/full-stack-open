@@ -1,6 +1,7 @@
 import { updateBlog, deleteBlog } from '../reducers/blogReducer'
 import { useDispatch, useSelector } from 'react-redux'
 
+import { BlogDiv, Button, DeleteButton } from '../styles'
 import Comments from './Comments'
 
 const Blog = ({ blogId }) => {
@@ -26,23 +27,23 @@ const Blog = ({ blogId }) => {
   }
 
   return (
-    <div className="blog">
+    <BlogDiv>
       <div className="blogTitle">
         <h3>{`"${blog.title}" by ${blog.author}`}</h3>
       </div>
       <div className="blogDetails">
         <a href={blog.url}>{blog.url}</a>
         <span className="likes">{`${blog.likes} likes`} </span>{' '}
-        <button onClick={() => updateLikes(blog)}>like</button>
+        <Button onClick={() => updateLikes(blog)}>like</Button>
         <span className="user">{`added by ${blog.user.name || 'Unassigned user'}`}</span>
         {
           blog.user.username === user.username
-            ? (<button onClick={() => removeBlog(blog)}>remove</button>)
+            ? (<DeleteButton onClick={() => removeBlog(blog)}>remove</DeleteButton>)
             : null
         }
       </div>
       <Comments blog={blog} />
-    </div>
+    </BlogDiv>
   )
 }
 

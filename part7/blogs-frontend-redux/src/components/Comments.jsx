@@ -6,13 +6,13 @@ const Comments = ({ blog }) => {
     <div>
       <h4>comments</h4>
       <CommentsForm blog={blog} />
-      <ul>
-        {
-          comments.length === 0
-            ? null
-            : comments.map((comment) => (<li key={comment.id}>{comment.content}</li>))
-        }
-      </ul>
+
+      {
+        comments.length === 0
+          ? <span>no comments added</span>
+          : <ul>{comments.map((comment) => (<li key={comment.id}>{comment.content}</li>))}</ul>
+      }
+
     </div>
   )
 }

@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { useDispatch } from 'react-redux'
-import PropTypes from 'prop-types'
 
-import { createBlog, addComment } from '../reducers/blogReducer'
+import { CreateButton, Form, InputText, Label } from '../styles'
+import { addComment } from '../reducers/blogReducer'
 
 const CommentsForm = ({ blog }) => {
   const dispatch = useDispatch()
@@ -15,10 +15,10 @@ const CommentsForm = ({ blog }) => {
     setContent('')
   }
   return (
-    <form className="CommentsForm" onSubmit={onSubmit}>
+    <Form onSubmit={onSubmit}>
       <div>
-        <label htmlFor="content">content:</label>
-        <input
+        <Label htmlFor="content">content:</Label>
+        <InputText
           type="text"
           value={content}
           name="content"
@@ -26,8 +26,8 @@ const CommentsForm = ({ blog }) => {
           onChange={({ target }) => setContent(target.value)}
         />
       </div>
-      <button type="submit">Add Comment</button>
-    </form>
+      <CreateButton type="submit">Add Comment</CreateButton>
+    </Form>
   )
 }
 

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import PropTypes from 'prop-types'
 
+import { CreateButton, Form, InputText, Label } from '../styles'
 import { createBlog } from '../reducers/blogReducer'
 
 const BlogForm = ({ user, blogFormRef }) => {
@@ -19,10 +20,10 @@ const BlogForm = ({ user, blogFormRef }) => {
     setUrl('')
   }
   return (
-    <form className="blogForm" onSubmit={onSubmit}>
+    <Form onSubmit={onSubmit}>
       <div>
-        <label htmlFor="title">title:</label>
-        <input
+        <Label htmlFor="title">title:</Label>
+        <InputText
           type="text"
           value={title}
           name="title"
@@ -31,8 +32,8 @@ const BlogForm = ({ user, blogFormRef }) => {
         />
       </div>
       <div>
-        <label htmlFor="author">author:</label>
-        <input
+        <Label htmlFor="author">author:</Label>
+        <InputText
           type="text"
           value={author}
           name="author"
@@ -41,8 +42,8 @@ const BlogForm = ({ user, blogFormRef }) => {
         />
       </div>
       <div>
-        <label htmlFor="url">url:</label>
-        <input
+        <Label htmlFor="url">url:</Label>
+        <InputText
           type="url"
           value={url}
           name="url"
@@ -50,8 +51,8 @@ const BlogForm = ({ user, blogFormRef }) => {
           onChange={({ target }) => setUrl(target.value)}
         />
       </div>
-      <button type="submit">Create</button>
-    </form>
+      <CreateButton type="submit">Create</CreateButton>
+    </Form>
   )
 }
 

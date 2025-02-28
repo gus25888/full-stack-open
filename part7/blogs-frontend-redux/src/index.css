@@ -24,21 +24,6 @@
   margin-bottom: 10px;
 }
 
-form.blogForm {
-  margin-left: 5px;
-  margin-bottom: 30px;
-}
-
-form.blogForm label {
-  display: inline-block;
-  margin-right: 5px;
-  width: 50px;
-}
-
-div.blog {
-  background-color: light-gray;
-}
-
 div.blogTitle {
   font-weight: bold;
 }
@@ -54,8 +39,8 @@ div.blogDetails a {
 div.blogDetails span.likes {
   display: inline;
   margin-left: 3px;
-  margin-top: 5px;
-  margin-bottom: 5px;
+  margin-top: 10px;
+  margin-bottom: 10px;
   font-weight: bolder;
 }
 
@@ -63,10 +48,13 @@ div.blogDetails span.user {
   display: block;
 }
 
-div.blogAccess {
-  border: 1px solid deepskyblue;
-  padding-bottom: 3px;
-  padding-top: 3px;
-  margin-bottom: 2px;
-  margin-top: 2px;
+a.accessLink {
+  background-color: rgb(127, 223, 255);
+  border-bottom: 2px solid rgb(173, 190, 230);
+  border-radius: 3px;
+  margin: 0.25em;
+  padding: 0.5em;
+  font-style: normal;
+  color: black;
+  text-decoration: none;
 }
