@@ -1,14 +1,9 @@
-import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
-const Blog = ({ user, blog, updateBlog, deleteBlog }) => {
-  const [detailsVisible, setDetailsVisible] = useState(false)
+import Comments from './Comments'
 
-  const visibility = { display: detailsVisible ? '' : 'none' }
-
-  const toggleVisibility = () => {
-    setDetailsVisible(!detailsVisible)
-  }
-
+const Blog = ({ user, blog, updateBlog, deleteBlog, addComment }) => {
+  const navigate = useNavigate()
   const updateLikes = (blog) => {
     const { id, title, author, url, user } = blog
     const blogToUpdate = {
@@ -25,26 +20,23 @@ const Blog = ({ user, blog, updateBlog, deleteBlog }) => {
   const removeBlog = (blog) => {
     if (confirm(`Remove blog "${blog.title}" by ${blog.author}?`)) {
       deleteBlog(blog.id)
+      navigate('/')
     }
   }
 
   return (
-    <div className="blog">
-      <div className="blogTitle">
-        {`"${blog.title}" by ${blog.author}`}
-        <button onClick={toggleVisibility}>
-          {detailsVisible ? 'hide' : 'show'}
-        </button>
-      </div>
-      <div className="blogDetails" style={visibility}>
+    <div>
+      <h2>{`"${blog.title}" by ${blog.author}`}</h2>
+      <div className="blogDetails">
         <a href={blog.url}>{blog.url}</a>
         <span className="likes">{`likes: ${blog.likes}`} </span>{' '}
         <button onClick={() => updateLikes(blog)}>like</button>
-        <span className="user">{blog.user.name || 'Unassigned user'}</span>
+        <span className="user">{`added by ${blog.user.name || 'Unassigned user'}`}</span>
         {blog.user.username === user.username ? (
           <button onClick={() => removeBlog(blog)}>remove</button>
         ) : null}
       </div>
+      <Comments blog={blog} addComment={addComment} />
     </div>
   )
 }

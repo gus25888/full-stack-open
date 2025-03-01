@@ -1,18 +1,26 @@
 import { useState, useEffect, useRef, useContext } from 'react'
 import { useQueryClient, useMutation, useQuery } from '@tanstack/react-query'
+import { Routes, Route, useMatch } from 'react-router-dom'
 
 import blogService from './services/blogs'
-import loginService from './services/login'
+import userService from './services/users'
+
+import {
+  useNotificationDispatch,
+  useNotificationTypes,
+} from './contexts/NotificationContext'
+import LoginContext from './contexts/LoginContext'
+import { setUserSession } from './reducers/loginReducer'
 
 import Blog from './components/Blog'
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
 import Notification from './components/Notification'
 import Toggable from './components/Toggable'
-
-import { useNotificationDispatch, useNotificationTypes } from './contexts/NotificationContext'
-import LoginContext from './contexts/LoginContext'
-import { setUserSession, logout } from './reducers/loginReducer'
+import BlogList from './components/BlogList'
+import Users from './components/Users'
+import User from './components/User'
+import Menu from './components/Menu'
 
 const App = () => {
   const [user, userDispatch] = useContext(LoginContext)
@@ -39,7 +47,11 @@ const App = () => {
       blogFormRef.current.toggleVisibility()
       const blogs = queryClient.getQueryData(['blogs'])
       const userId = blogCreated.user
-      blogCreated.user = { username: user.username, name: user.name, id: userId }
+      blogCreated.user = {
+        username: user.username,
+        name: user.name,
+        id: userId,
+      }
       queryClient.setQueryData(['blogs'], blogs.concat(blogCreated))
       showMessage(
         `blog "${blogCreated.title}" by ${blogCreated.author} added`,
@@ -50,20 +62,39 @@ const App = () => {
       const errorMessage = error.message
       showMessage(`${errorMessage || 'server error'}`, notificationTypes.ERROR)
       console.error(error)
-    }
+    },
+  })
+
+  const createCommentMutation = useMutation({
+    mutationFn: blogService.addComment,
+    onSuccess: (commentCreated) => {
+      queryClient.invalidateQueries('blogs')
+      showMessage(
+        `comment added`,
+        notificationTypes.SUCCESS
+      )
+    },
+    onError: (error) => {
+      const errorMessage = error.message
+      showMessage(`${errorMessage || 'server error'}`, notificationTypes.ERROR)
+      console.error(error)
+    },
   })
 
   const updateBlogMutation = useMutation({
     mutationFn: blogService.update,
     onSuccess: (modifiedBlog) => {
       const blogs = queryClient.getQueryData(['blogs'])
-      queryClient.setQueryData(['blogs'], blogs.map(blog => blog.id === modifiedBlog.id ? modifiedBlog : blog))
+      queryClient.setQueryData(
+        ['blogs'],
+        blogs.map((blog) => (blog.id === modifiedBlog.id ? modifiedBlog : blog))
+      )
     },
     onError: (error) => {
       const errorMessage = error.message
       showMessage(`${errorMessage || 'server error'}`, notificationTypes.ERROR)
       console.error(error)
-    }
+    },
   })
 
   const deleteBlogMutation = useMutation({
@@ -75,11 +106,15 @@ const App = () => {
       const errorMessage = error.message
       showMessage(`${errorMessage || 'server error'}`, notificationTypes.ERROR)
       console.error(error)
-    }
+    },
   })
 
-
   /* ********* Functions ********* */
+  const matchUser = useMatch('/users/:userId')
+  const userId = matchUser ? matchUser.params.userId : null
+
+  const matchBlog = useMatch('/blogs/:blogId')
+  const blogId = matchBlog ? matchBlog.params.blogId : null
 
   const notificationDispatch = useNotificationDispatch()
   const notificationTypes = useNotificationTypes()
@@ -89,15 +124,18 @@ const App = () => {
       type,
       notificationText: message,
     })
-    setTimeout(() => notificationDispatch({ type: notificationTypes.HIDDEN }), 2000)
-  }
-
-  const handleLogout = () => {
-    logout(userDispatch)
+    setTimeout(
+      () => notificationDispatch({ type: notificationTypes.HIDDEN }),
+      2000
+    )
   }
 
   const createBlog = async (newBlog) => {
     createBlogMutation.mutate(newBlog)
+  }
+
+  const createComment = async (newComment) => {
+    createCommentMutation.mutate(newComment)
   }
 
   const updateBlog = async (blog) => {
@@ -108,57 +146,55 @@ const App = () => {
     deleteBlogMutation.mutate(id)
   }
 
+  /* ********* Initial Data Load ********* */
   const result = useQuery({
     queryKey: ['blogs'],
     queryFn: blogService.getAll,
-    refetchOnWindowFocus: false
+    refetchOnWindowFocus: false,
   })
 
-  if (result.isLoading) {
+  const resultUsers = useQuery({
+    queryKey: ['users'],
+    queryFn: userService.getAll,
+    refetchOnWindowFocus: false,
+  })
+
+  if (result.isLoading || resultUsers.isLoading) {
     return <div>loading data...</div>
   }
 
   const blogs = result.data
+  const blog = blogs.find(blog => blog.id === blogId)
 
   /* ********* Final Display ********* */
   if (Object.keys(user).length === 0) {
-    return (
-      <div>
-        <h2>Log in to application</h2>
-        <LoginForm userDispatch={userDispatch} />
-      </div>
-    )
+    return <LoginForm userDispatch={userDispatch} />
   }
 
   return (
     <div>
-      <h2>blogs</h2>
+      <Menu />
+      <h2>blog app</h2>
       <Notification />
-      <p>
-        {user.name} logged in <button onClick={handleLogout}>logout</button>
-      </p>
-      <h3>Add new Blog</h3>
-      <Toggable buttonLabel={'Create New Blog'} ref={blogFormRef}>
-        <BlogForm addBlog={createBlog} />
-      </Toggable>
-      <h3>Blogs added</h3>
       {
-        /* blogs are sorted in descending order */
-        blogs
-          ? blogs
-            .sort((a, b) =>
-              a.likes > b.likes ? -1 : a.likes < b.likes ? 1 : 0
-            )
-            .map((blog) => (
-              <Blog
-                key={blog.id}
-                user={user}
-                blog={blog}
-                updateBlog={updateBlog}
-                deleteBlog={deleteBlog}
-              />
-            ))
-          : null
+        <Routes>
+          <Route
+            path={'/'}
+            element={<BlogList blogs={blogs} blogFormRef={blogFormRef} createBlog={createBlog} />}>
+          </Route>
+          <Route
+            path={'/users'}
+            element={<Users />}>
+          </Route>
+          <Route
+            path={'/users/:userId'}
+            element={<User userId={userId} />}>
+          </Route>
+          <Route
+            path={'/blogs/:blogId'}
+            element={<Blog user={user} blog={blog} updateBlog={updateBlog} deleteBlog={deleteBlog} addComment={createComment} />}>
+          </Route>
+        </Routes>
       }
     </div>
   )

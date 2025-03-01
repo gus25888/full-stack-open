@@ -1,7 +1,7 @@
 export const NOTIFICATION_TYPES = {
   SUCCESS: 'success',
   ERROR: 'error',
-  HIDDEN: ''
+  HIDDEN: '',
 }
 
 const notificationReducer = (state, action) => {

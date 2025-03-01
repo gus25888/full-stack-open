@@ -1,14 +1,21 @@
 import { createContext, useContext, useReducer } from 'react'
 
-import notificationReducer, { NOTIFICATION_TYPES } from '../reducers/notificationReducer'
+import notificationReducer, {
+  NOTIFICATION_TYPES,
+} from '../reducers/notificationReducer'
 
 const NotificationContext = createContext()
 
 export const NotificationContextProvider = (props) => {
-  const [notification, notificationDispatch] = useReducer(notificationReducer, { notificationText: '', notificationType: NOTIFICATION_TYPES.HIDDEN })
+  const [notification, notificationDispatch] = useReducer(notificationReducer, {
+    notificationText: '',
+    notificationType: NOTIFICATION_TYPES.HIDDEN,
+  })
 
   return (
-    <NotificationContext.Provider value={[notification, notificationDispatch, NOTIFICATION_TYPES]}>
+    <NotificationContext.Provider
+      value={[notification, notificationDispatch, NOTIFICATION_TYPES]}
+    >
       {props.children}
     </NotificationContext.Provider>
   )

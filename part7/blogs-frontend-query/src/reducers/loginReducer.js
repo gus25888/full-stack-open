@@ -41,11 +41,9 @@ export const login = async (userDispatch, username, password) => {
   userDispatch({ type: ACTION_TYPES.SET, payload: user })
 }
 
-
 export const logout = (userDispatch) => {
   window.localStorage.removeItem(USER_LOGIN)
   userDispatch({ type: ACTION_TYPES.REMOVE })
 }
-
 
 export default loginReducer
