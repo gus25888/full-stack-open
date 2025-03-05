@@ -1,5 +1,8 @@
 import { useState } from 'react'
 import PropTypes from 'prop-types'
+import Button from '@mui/material/Button'
+import TextField from '@mui/material/TextField'
+import AddCommentIcon from '@mui/icons-material/AddComment'
 
 const CommentForm = ({ blogId, addComment }) => {
   const [content, setContent] = useState('')
@@ -13,16 +16,16 @@ const CommentForm = ({ blogId, addComment }) => {
   return (
     <form onSubmit={onSubmit}>
       <div>
-        <label htmlFor="content">content:</label>
-        <input
+        <TextField
           type="text"
           value={content}
           name="content"
           id="content"
+          label="content"
           onChange={({ target }) => setContent(target.value)}
         />
       </div>
-      <button type="submit">Create</button>
+      <Button type="submit" color="success" variant="contained" endIcon={<AddCommentIcon />}>Create</Button>
     </form>
   )
 }

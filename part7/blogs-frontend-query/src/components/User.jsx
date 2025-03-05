@@ -1,5 +1,8 @@
 import { useQueryClient } from '@tanstack/react-query'
 
+import List from '@mui/material/List'
+import ListItem from '@mui/material/ListItem'
+
 const User = ({ userId }) => {
   const queryClient = useQueryClient()
   const users = queryClient.getQueryData(['users'])
@@ -18,11 +21,13 @@ const User = ({ userId }) => {
         {blogsToShow.length ? (
           <>
             <h4>added blogs</h4>
-            <ul>
-              {blogsToShow.map((blog) => (
-                <li key={blog.id}>{blog.title}</li>
-              ))}
-            </ul>
+            <List sx={{ width: '50%', maxWidth: '60%' }}>
+              {
+                blogsToShow.map((blog) => (
+                  <ListItem key={blog.id} sx={{ bgcolor: "lightgoldenrodyellow", borderRadius: 2, border: "1px solid khaki", margin: 1, padding: 1 }}>{blog.title}</ListItem>
+                ))
+              }
+            </List>
           </>
         ) : (
           <h4>no added blogs</h4>

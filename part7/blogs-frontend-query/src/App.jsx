@@ -14,13 +14,12 @@ import { setUserSession } from './reducers/loginReducer'
 
 import Blog from './components/Blog'
 import LoginForm from './components/LoginForm'
-import BlogForm from './components/BlogForm'
 import Notification from './components/Notification'
-import Toggable from './components/Toggable'
 import BlogList from './components/BlogList'
 import Users from './components/Users'
 import User from './components/User'
 import Menu from './components/Menu'
+import { Container } from '@mui/material'
 
 const App = () => {
   const [user, userDispatch] = useContext(LoginContext)
@@ -172,9 +171,8 @@ const App = () => {
   }
 
   return (
-    <div>
+    <Container>
       <Menu />
-      <h2>blog app</h2>
       <Notification />
       {
         <Routes>
@@ -192,11 +190,19 @@ const App = () => {
           </Route>
           <Route
             path={'/blogs/:blogId'}
-            element={<Blog user={user} blog={blog} updateBlog={updateBlog} deleteBlog={deleteBlog} addComment={createComment} />}>
+            element={
+              <Blog
+                user={user}
+                blog={blog}
+                updateBlog={updateBlog}
+                deleteBlog={deleteBlog}
+                addComment={createComment}
+              />
+            }>
           </Route>
         </Routes>
       }
-    </div>
+    </Container>
   )
 }
 

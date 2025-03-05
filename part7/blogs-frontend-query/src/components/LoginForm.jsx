@@ -1,4 +1,8 @@
 import { useState } from 'react'
+import Button from '@mui/material/Button'
+import TextField from '@mui/material/TextField'
+import SendIcon from '@mui/icons-material/Send'
+
 import { login } from '../reducers/loginReducer'
 
 const LoginForm = ({ userDispatch }) => {
@@ -21,26 +25,26 @@ const LoginForm = ({ userDispatch }) => {
       <h2>Log in to application</h2>
       <form onSubmit={handleLogin}>
         <div>
-          <label htmlFor="username">username</label>
-          <input
+          <TextField
             type="text"
             value={username}
             name="username"
             id="username"
+            label="username"
             onChange={({ target }) => setUsername(target.value)}
           />
         </div>
         <div>
-          <label htmlFor="password">password</label>
-          <input
+          <TextField
             type="password"
             value={password}
             name="password"
             id="password"
+            label="password"
             onChange={({ target }) => setPassword(target.value)}
           />
         </div>
-        <button type="submit">Login</button>
+        <Button type="submit" variant="contained" endIcon={<SendIcon />}>Login</Button>
       </form>
     </div>
   )
