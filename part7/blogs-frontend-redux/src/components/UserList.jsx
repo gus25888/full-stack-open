@@ -1,28 +1,29 @@
 import { useSelector } from 'react-redux'
 
 const UserList = () => {
-  const blogs = useSelector(({ blog }) => blog)
+  // const blogs = useSelector(({ blog }) => blog)
 
-  const blogsPerUser = []
+  // const blogsPerUser = []
 
-  blogs.forEach((blog) => {
-    const userId = blog.user.id
-    const name = blog.user.name
+  // blogs.forEach((blog) => {
+  //   const userId = blog.user.id
+  //   const name = blog.user.name
 
-    const index = blogsPerUser.findIndex((blog) => blog.userId === userId)
+  //   const index = blogsPerUser.findIndex((blog) => blog.userId === userId)
 
-    if (index === -1) {
-      blogsPerUser.push({
-        blogs: 1,
-        name,
-        userId,
-      })
-    } else {
-      blogsPerUser[index].blogs++
-    }
-  })
+  //   if (index === -1) {
+  //     blogsPerUser.push({
+  //       blogs: 1,
+  //       name,
+  //       userId,
+  //     })
+  //   } else {
+  //     blogsPerUser[index].blogs++
+  //   }
+  // })
+  const users = useSelector(({ users }) => users)
 
-  if (blogsPerUser.length === 0) {
+  if (!users) {
     return null
   }
 
@@ -37,10 +38,10 @@ const UserList = () => {
         </thead>
         <tbody>
           {
-            blogsPerUser.map((user) => (
-              <tr key={user.userId}>
-                <td><a href={`/users/${user.userId}`}>{user.name}</a></td>
-                <td>{user.blogs}</td>
+            users.map((user) => (
+              <tr key={user.id}>
+                <td><a href={`/users/${user.id}`}>{user.name}</a></td>
+                <td>{user.blogs.length}</td>
               </tr>
             ))
           }

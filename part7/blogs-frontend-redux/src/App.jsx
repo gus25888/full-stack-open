@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Routes, Route, useMatch } from 'react-router-dom'
 
@@ -11,6 +11,7 @@ import Blog from './components/Blog'
 import Menu from './components/Menu'
 
 import { getInitialBlogs } from './reducers/blogReducer'
+import { getInitialUsers } from './reducers/usersReducer'
 import { logout, setUserSession } from './reducers/loginReducer'
 
 
@@ -20,6 +21,7 @@ const App = () => {
   /* *********  Effects  ********* */
   useEffect(() => { dispatch(setUserSession()) }, [dispatch])
   useEffect(() => { dispatch(getInitialBlogs()) }, [dispatch])
+  useEffect(() => { dispatch(getInitialUsers()) }, [dispatch])
 
   /* ********* Final Display ********* */
 

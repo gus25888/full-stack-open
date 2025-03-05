@@ -46,15 +46,14 @@ blogsRouter.post('/', async (request, response, next) => {
 blogsRouter.post('/:id/comments', async (request, response, next) => {
   try {
     const blogId = request.params.id
-    const { content } = request.body
-    const newComment = new Comment({ content, blogId })
-    const savedComment = await newComment.save()
-
     const blogFound = await Blog.findById(blogId)
 
     if (!blogFound) {
       return response.status(401).json({ error: 'id not found' })
     }
+    const { content } = request.body
+    const newComment = new Comment({ content, blogId })
+    const savedComment = await newComment.save()
 
     blogFound.comments = blogFound.comments.concat(savedComment._id)
 

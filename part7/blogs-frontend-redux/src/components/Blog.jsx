@@ -3,8 +3,10 @@ import { useDispatch, useSelector } from 'react-redux'
 
 import { BlogDiv, Button, DeleteButton } from '../styles'
 import Comments from './Comments'
+import { useNavigate } from 'react-router-dom'
 
 const Blog = ({ blogId }) => {
+  const navigate = useNavigate()
   const dispatch = useDispatch()
   const user = useSelector(({ login }) => login.user)
 
@@ -38,7 +40,10 @@ const Blog = ({ blogId }) => {
         <span className="user">{`added by ${blog.user.name || 'Unassigned user'}`}</span>
         {
           blog.user.username === user.username
-            ? (<DeleteButton onClick={() => removeBlog(blog)}>remove</DeleteButton>)
+            ? (<DeleteButton onClick={() => {
+              removeBlog(blog)
+              navigate('/')
+            }}>remove</DeleteButton>)
             : null
         }
       </div>
