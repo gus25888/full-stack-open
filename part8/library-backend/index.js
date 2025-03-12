@@ -207,7 +207,11 @@ const resolvers = {
         return null
       }
 
-      const updatedAuthor = { name, born }
+      const updatedAuthor = {
+        id: authorFound.id,
+        name,
+        born: born || null
+      }
       authors = authors.map(author => author.name === name ? updatedAuthor : author)
       return updatedAuthor
     }
