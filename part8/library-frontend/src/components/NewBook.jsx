@@ -17,10 +17,12 @@ const NewBook = (props) => {
       console.log(error)
 
       const messages = error.graphQLErrors[0].message
+      // eslint-disable-next-line react/prop-types
       props.notify(messages)
     }
   })
 
+  // eslint-disable-next-line react/prop-types
   if (!props.show) {
     return null
   }
@@ -51,7 +53,7 @@ const NewBook = (props) => {
 
   return (
     <div>
-      <form onSubmit={submit}>
+      <form onSubmit={submit} style={{ marginTop: '1em', marginBottom: '1em' }}>
         <div>
           title
           <input
@@ -75,7 +77,7 @@ const NewBook = (props) => {
           />
         </div>
         <div>
-          <input
+          genre <input
             value={genre}
             onChange={({ target }) => setGenre(target.value)}
           />

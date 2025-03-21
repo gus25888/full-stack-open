@@ -41,6 +41,7 @@ const Authors = (props) => {
           ))}
         </tbody>
       </table>
+      {/* eslint-disable-next-line react/prop-types */}
       <AuthorsForm notify={props.notify} authors={authors} />
     </div>
   )
