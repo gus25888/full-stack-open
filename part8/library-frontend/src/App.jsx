@@ -11,7 +11,9 @@ import LoginForm from "./components/LoginForm"
 import Recommendations from "./components/Recommendations"
 
 const App = () => {
-  const [token, setToken] = useState(null)
+  const ALL_GENRES = 'all genres'
+  const [genreSelected, setGenreSelected] = useState(ALL_GENRES)
+  const [token, setToken] = useState(localStorage.getItem('libraryApp-user-token') || null)
   const [page, setPage] = useState("authors")
   const [errorMessage, setErrorMessage] = useState(null)
 
@@ -50,11 +52,11 @@ const App = () => {
 
       <Authors show={page === "authors"} notify={notify} />
 
-      <Books show={page === "books"} />
+      <Books show={page === "books"} ALL_GENRES={ALL_GENRES} genreSelected={genreSelected} setGenreSelected={setGenreSelected} />
 
       <Recommendations show={page === "recommendations" && token} />
 
-      <NewBook show={page === "add" && token} notify={notify} />
+      <NewBook show={page === "add" && token} notify={notify} ALL_GENRES={ALL_GENRES} genreSelected={genreSelected} />
 
       <LoginForm show={page === "login" && !token} notify={notify} setToken={setToken} setPage={setPage} />
     </div>

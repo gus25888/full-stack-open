@@ -1,10 +1,11 @@
+/* eslint-disable react/prop-types */
 import { useState } from 'react'
 
 import { useMutation } from '@apollo/client'
 
-import { ALL_AUTHORS, ALL_BOOKS, CREATE_BOOK } from '../queries'
+import { ALL_AUTHORS, ALL_BOOKS, BOOKS_PER_GENRE, CREATE_BOOK } from '../queries'
 
-const NewBook = (props) => {
+const NewBook = ({ ALL_GENRES, genreSelected, notify, show }) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [published, setPublished] = useState('')
@@ -14,16 +15,28 @@ const NewBook = (props) => {
   const [createBook] = useMutation(CREATE_BOOK, {
     refetchQueries: [{ query: ALL_BOOKS }, { query: ALL_AUTHORS }],
     onError: (error) => {
-      console.log(error)
-
-      const messages = error.graphQLErrors[0].message
+      const errors = error.graphQLErrors[0].extensions.error.errors
+      const messages = Object.values(errors).map(e => e.message).join('\n')
+      // const messages = error.graphQLErrors[0].message || error
       // eslint-disable-next-line react/prop-types
-      props.notify(messages)
-    }
+      notify(messages)
+    },
+    update: (cache, response) => {
+      cache.updateQuery({
+        query: BOOKS_PER_GENRE,
+        variables: {
+          genre: (genreSelected === ALL_GENRES) ? '' : genreSelected
+        }
+      }, ({ allBooks }) => {
+        return {
+          allBooks: allBooks.concat(response.data.addBook),
+        }
+      })
+    },
   })
 
   // eslint-disable-next-line react/prop-types
-  if (!props.show) {
+  if (!show) {
     return null
   }
 
