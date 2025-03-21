@@ -54,7 +54,7 @@ const Books = (props) => {
               ))
           }
           <tr>
-            <td>
+            <td colSpan="3">
               {
                 genres.map(genre => (
                   <button key={genre} onClick={() => { setGenreSelected(genre) }}>
