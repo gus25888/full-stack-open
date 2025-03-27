@@ -1,30 +1,32 @@
 /* eslint-disable react/prop-types */
 import { useQuery } from '@apollo/client'
 
-import { BOOKS_PER_GENRE, ALL_BOOKS } from '../queries'
+import { ALL_GENRES_VALUE, BOOKS_PER_GENRE, ALL_BOOKS } from '../utils/queries'
 
 const Books = (props) => {
-  const { ALL_GENRES, genreSelected, setGenreSelected, show } = props
+  const { genreSelected, setGenreSelected, show } = props
   const result = useQuery(ALL_BOOKS)
   const resultFiltered = useQuery(BOOKS_PER_GENRE, {
-    variables: { genre: (genreSelected === ALL_GENRES) ? '' : genreSelected },
+    variables: { genre: (genreSelected === ALL_GENRES_VALUE) ? '' : genreSelected },
   })
-  if (result.loading || resultFiltered.loading) {
-    return <div>loading...</div>
-  }
-  if (result.error || resultFiltered.error) {
-    return <div>Error detected... Review console.</div>
-  }
 
   if (!show) {
     return null
   }
 
+  if (result.loading || resultFiltered.loading) {
+    return <div>loading...</div>
+  }
+  if (result.error || resultFiltered.error) {
+    return <div>Error detected in Books... Review console.</div>
+  }
+
   const books = result.data.allBooks
   const genres = Array.from(new Set(books.flatMap((book) => book.genres)))
-  genres.push(ALL_GENRES)
+  genres.push(ALL_GENRES_VALUE)
 
   const booksFiltered = resultFiltered.data.allBooks
+  const booksToShow = (genreSelected === ALL_GENRES_VALUE) ? books : booksFiltered
 
   return (
     <div>
@@ -38,7 +40,7 @@ const Books = (props) => {
             <th>published</th>
           </tr>
           {
-            booksFiltered
+            booksToShow
               .map((book) => (
                 <tr key={book.title}>
                   <td>{book.title}</td>

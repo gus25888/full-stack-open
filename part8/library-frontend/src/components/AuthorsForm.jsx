@@ -4,7 +4,7 @@ import { useMutation } from "@apollo/client"
 import Select from 'react-select'
 
 
-import { ALL_AUTHORS, EDIT_AUTHOR } from '../queries'
+import { ALL_AUTHORS, EDIT_AUTHOR } from '../utils/queries'
 
 const AuthorsForm = ({ notify, authors }) => {
   const [name, setName] = useState('')

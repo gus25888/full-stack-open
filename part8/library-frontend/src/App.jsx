@@ -1,23 +1,32 @@
 import { useState } from "react"
+import { useApolloClient, useSubscription } from '@apollo/client'
 
-import { useApolloClient } from '@apollo/client'
+import Authors from './components/Authors'
+import Books from './components/Books'
+import NewBook from './components/NewBook'
+import Notification from './components/Notification'
+import LoginForm from './components/LoginForm'
+import Recommendations from './components/Recommendations'
 
-
-import Authors from "./components/Authors"
-import Books from "./components/Books"
-import NewBook from "./components/NewBook"
-import Notification from "./components/Notification"
-import LoginForm from "./components/LoginForm"
-import Recommendations from "./components/Recommendations"
+import { updateCache } from './utils/helpers'
+import { ALL_GENRES_VALUE, ALL_BOOKS, BOOK_ADDED } from './utils/queries'
 
 const App = () => {
-  const ALL_GENRES = 'all genres'
-  const [genreSelected, setGenreSelected] = useState(ALL_GENRES)
-  const [token, setToken] = useState(localStorage.getItem('libraryApp-user-token') || null)
+  const existingToken = localStorage.getItem('libraryApp-user-token')
+  const [genreSelected, setGenreSelected] = useState(ALL_GENRES_VALUE)
+  const [token, setToken] = useState(existingToken)
   const [page, setPage] = useState("authors")
   const [errorMessage, setErrorMessage] = useState(null)
 
   const client = useApolloClient()
+
+  useSubscription(BOOK_ADDED, {
+    onData: ({ data }) => {
+      const addedBook = data.data.bookAdded
+      window.alert(`"${addedBook.title}" by ${addedBook.author.name} added`)
+      updateCache(client.cache, { query: ALL_BOOKS }, addedBook)
+    }
+  })
 
   const notify = (message) => {
     setErrorMessage(message)
@@ -52,11 +61,11 @@ const App = () => {
 
       <Authors show={page === "authors"} notify={notify} />
 
-      <Books show={page === "books"} ALL_GENRES={ALL_GENRES} genreSelected={genreSelected} setGenreSelected={setGenreSelected} />
+      <Books show={page === "books"} ALL_GENRES={ALL_GENRES_VALUE} genreSelected={genreSelected} setGenreSelected={setGenreSelected} />
 
       <Recommendations show={page === "recommendations" && token} />
 
-      <NewBook show={page === "add" && token} notify={notify} ALL_GENRES={ALL_GENRES} genreSelected={genreSelected} />
+      <NewBook show={page === "add" && token} notify={notify} ALL_GENRES={ALL_GENRES_VALUE} genreSelected={genreSelected} />
 
       <LoginForm show={page === "login" && !token} notify={notify} setToken={setToken} setPage={setPage} />
     </div>

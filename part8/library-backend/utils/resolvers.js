@@ -50,14 +50,13 @@ const resolvers = {
     },
     allAuthors: async () => {
       const authors = await Author.find({})
-      const books = await Book.find({}).populate('author', { name: 1 })
 
       return authors.map((author) => {
-        const { name, born } = author
+        const { name, born, books } = author
         return {
           name,
           born,
-          bookCount: books.reduce((total, book) => (name === book.author.name) ? total + 1 : total, 0)
+          bookCount: books.length
         }
       })
     },
@@ -109,7 +108,9 @@ const resolvers = {
       const newBook = new Book({ title, published, author: bookAuthor, genres })
 
       try {
-        await newBook.save()
+        const savedBook = await newBook.save()
+        bookAuthor.books = bookAuthor.books.concat(savedBook._id)
+        await bookAuthor.save()
       } catch (error) {
         throw new GraphQLError('Creating book failed: wrong data', {
           extensions: {

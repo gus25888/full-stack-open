@@ -3,9 +3,10 @@ import { useState } from 'react'
 
 import { useMutation } from '@apollo/client'
 
-import { ALL_AUTHORS, ALL_BOOKS, BOOKS_PER_GENRE, CREATE_BOOK } from '../queries'
+import { ALL_GENRES_VALUE, BOOKS_PER_GENRE, CREATE_BOOK } from '../utils/queries'
+import { updateCache } from '../utils/helpers'
 
-const NewBook = ({ ALL_GENRES, genreSelected, notify, show }) => {
+const NewBook = ({ genreSelected, notify, show }) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [published, setPublished] = useState('')
@@ -13,25 +14,21 @@ const NewBook = ({ ALL_GENRES, genreSelected, notify, show }) => {
   const [genres, setGenres] = useState([])
 
   const [createBook] = useMutation(CREATE_BOOK, {
-    refetchQueries: [{ query: ALL_BOOKS }, { query: ALL_AUTHORS }],
     onError: (error) => {
       const errors = error.graphQLErrors[0].extensions.error.errors
       const messages = Object.values(errors).map(e => e.message).join('\n')
-      // const messages = error.graphQLErrors[0].message || error
       // eslint-disable-next-line react/prop-types
       notify(messages)
     },
     update: (cache, response) => {
-      cache.updateQuery({
-        query: BOOKS_PER_GENRE,
-        variables: {
-          genre: (genreSelected === ALL_GENRES) ? '' : genreSelected
-        }
-      }, ({ allBooks }) => {
-        return {
-          allBooks: allBooks.concat(response.data.addBook),
-        }
-      })
+      updateCache(
+        cache,
+        {
+          query: BOOKS_PER_GENRE,
+          variables: { genre: (genreSelected === ALL_GENRES_VALUE) ? '' : genreSelected }
+        },
+        response.data.addBook
+      )
     },
   })
 

@@ -1,21 +1,24 @@
 import { useQuery } from '@apollo/client'
 
-import { ALL_BOOKS, LOGGEDIN_USER } from '../queries'
+import { ALL_BOOKS, LOGGEDIN_USER } from '../utils/queries'
 
 const Recommendations = (props) => {
   const result = useQuery(ALL_BOOKS)
   const userResult = useQuery(LOGGEDIN_USER)
 
+  // eslint-disable-next-line react/prop-types
+  if (!props.show) {
+    return null
+  }
+
   if (result.loading || userResult.loading) {
     return <div>loading...</div>
   }
   if (result.error || userResult.error) {
-    return <div>Error detected... Review console.</div>
-  }
+    console.log(result.error)
+    console.log(userResult.error)
 
-  // eslint-disable-next-line react/prop-types
-  if (!props.show) {
-    return null
+    return <div>Error detected in Recommendations... Review console.</div>
   }
 
   const books = result.data.allBooks

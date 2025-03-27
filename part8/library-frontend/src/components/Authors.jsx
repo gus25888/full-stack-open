@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/client'
 
-import { ALL_AUTHORS } from '../queries'
+import { ALL_AUTHORS } from '../utils/queries'
 
 import AuthorsForm from './AuthorsForm'
 
@@ -12,7 +12,7 @@ const Authors = (props) => {
     return <div>loading...</div>
   }
   if (result.error) {
-    return <div>Error detected... Review console.</div>
+    return <div>Error detected in Authors... Review console.</div>
   }
 
   // eslint-disable-next-line react/prop-types

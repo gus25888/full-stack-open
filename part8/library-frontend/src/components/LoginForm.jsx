@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useMutation } from '@apollo/client'
-import { LOGIN } from '../queries'
+import { LOGIN } from '../utils/queries'
 
 const LoginForm = ({ show, notify, setToken, setPage }) => { // eslint-disable-line
   const [username, setUsername] = useState('')
