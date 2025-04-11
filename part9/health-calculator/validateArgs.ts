@@ -22,6 +22,19 @@ export const parseArgumentsBmi = (args: string[]): BmiValues => {
     }
 };
 
+export const parseQueryArgumentsBmi = (args: any): BmiValues => {
+    const { height, weight } = args;
+
+    if (!isNaN(Number(height)) && !isNaN(Number(weight))) {
+        return {
+            height: Number(height),
+            weight: Number(weight),
+        };
+    } else {
+        throw new Error("Provided values were not numbers!");
+    }
+};
+
 export const parseArgumentsExercise = (args: string[]): ExerciseValues => {
     if (args.length < 4) throw new Error("Not enough arguments");
 

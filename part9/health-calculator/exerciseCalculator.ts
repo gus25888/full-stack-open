@@ -19,6 +19,12 @@ interface Calification {
 
 const califications: Calification[] = [
     {
+        rating: 0,
+        ratingDescription: "No Qualification",
+        minValue: -Infinity,
+        maxValue: -1,
+    },
+    {
         rating: 1,
         ratingDescription: "you have to try harder",
         minValue: 0,
@@ -48,11 +54,12 @@ const getCalification = (
     const periodLength = weekExerciseHours.length;
     let percentageCompletion = (targetAcquiredDays / periodLength) * 100;
 
-    const calificationObtained = califications.find(
-        (calification) =>
-            percentageCompletion > calification.minValue &&
-            percentageCompletion <= calification.maxValue
-    );
+    const calificationObtained =
+        califications.find(
+            (calification) =>
+                percentageCompletion > calification.minValue &&
+                percentageCompletion <= calification.maxValue
+        ) || califications[0];
 
     return calificationObtained;
 };

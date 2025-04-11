@@ -1,6 +1,6 @@
 import { parseArgumentsBmi } from "./validateArgs";
 
-const calculateBmi = (heightCms: number, weightKg: number): string => {
+export const calculateBmi = (heightCms: number, weightKg: number): string => {
     const bmi: number = weightKg / (heightCms / 100) ** 2;
     if (bmi < 18.5) {
         return "Underweight";
