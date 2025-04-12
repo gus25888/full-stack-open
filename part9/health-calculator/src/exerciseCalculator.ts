@@ -52,7 +52,7 @@ const getCalification = (
         (h) => h >= targetHours
     ).length;
     const periodLength = weekExerciseHours.length;
-    let percentageCompletion = (targetAcquiredDays / periodLength) * 100;
+    const percentageCompletion = (targetAcquiredDays / periodLength) * 100;
 
     const calificationObtained =
         califications.find(
@@ -64,7 +64,7 @@ const getCalification = (
     return calificationObtained;
 };
 
-const calculateExercises = (
+export const calculateExercises = (
     targetHours: number,
     weekExerciseHours: number[]
 ): Result => {

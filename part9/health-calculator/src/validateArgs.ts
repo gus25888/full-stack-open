@@ -22,7 +22,9 @@ export const parseArgumentsBmi = (args: string[]): BmiValues => {
     }
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const parseQueryArgumentsBmi = (args: any): BmiValues => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const { height, weight } = args;
 
     if (!isNaN(Number(height)) && !isNaN(Number(weight))) {
@@ -55,5 +57,31 @@ export const parseArgumentsExercise = (args: string[]): ExerciseValues => {
     return {
         exerciseHours,
         targetHours: Number(args[2]),
+    };
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const parseBodyArgumentsExercises = (args: any): ExerciseValues => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    if (!args.daily_exercises || !args.target)
+        throw new Error("parameters missing");
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    if (isNaN(Number(args.target))) throw new Error("malformatted parameters");
+
+    const exerciseHours: number[] = [];
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-explicit-any
+    args.daily_exercises.forEach((val: any) => {
+        if (isNaN(Number(val))) {
+            throw new Error("malformatted parameters!");
+        } else {
+            exerciseHours.push(Number(val));
+        }
+    });
+
+    return {
+        exerciseHours,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        targetHours: Number(args.target),
     };
 };
