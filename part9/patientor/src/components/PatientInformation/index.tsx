@@ -7,6 +7,7 @@ import { useParams } from "react-router-dom";
 
 import { Patient, Gender } from "../../types";
 import patientService from "../../services/patients";
+import Entries from "./Entries";
 
 const PatientInformation = () => {
     const [patient, setPatient] = useState<Patient>();
@@ -44,6 +45,7 @@ const PatientInformation = () => {
             <span>ssn: {patient.ssn}</span>
             <br />
             <span>occupation: {patient.occupation}</span>
+            {patient.entries ? <Entries entries={patient.entries} /> : null}
         </div>
     );
 };
