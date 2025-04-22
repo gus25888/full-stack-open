@@ -14,16 +14,21 @@ const getPatients = (): PatientWithoutGvtId[] =>
             dateOfBirth: patient.dateOfBirth,
             gender: patient.gender,
             occupation: patient.occupation,
+            entries: patient.entries,
         };
     });
 
+const getOnePatient = (id: string): Patient | undefined =>
+    patients.find((patient) => patient.id === id);
+
 const addPatient = (newPatient: NewPatient) => {
-    const patientAdded = { id: uuid(), ...newPatient };
+    const patientAdded = { id: uuid(), entries: [], ...newPatient };
     patients.push(patientAdded);
     return patientAdded;
 };
 
 export default {
     addPatient,
+    getOnePatient,
     getPatients,
 };
