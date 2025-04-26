@@ -5,12 +5,20 @@ import QuestionMarkIcon from "@mui/icons-material/QuestionMark";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
-import { Patient, Gender } from "../../types";
+import { Patient, Gender, Diagnose } from "../../types";
 import patientService from "../../services/patients";
 import Entries from "./Entries";
+import AddEntriesForm from "../AddEntriesForm";
+import Alert from "@mui/material/Alert/Alert";
 
-const PatientInformation = () => {
+interface Props {
+    diagnosis: Diagnose[];
+}
+const PatientInformation = (props: Props) => {
     const [patient, setPatient] = useState<Patient>();
+    const [error, setError] = useState<string>();
+    const [refresh, setRefresh] = useState<boolean>(false);
+
     const params = useParams();
     const patientId: string | undefined =
         params instanceof Object ? params.id : undefined;
@@ -24,7 +32,7 @@ const PatientInformation = () => {
                 setPatient(data);
             });
         }
-    }, [patientId]);
+    }, [patientId, refresh]);
 
     if (!patient) {
         return null;
@@ -41,10 +49,18 @@ const PatientInformation = () => {
                     <QuestionMarkIcon />
                 )}
             </h2>
-            <br />
             <span>ssn: {patient.ssn}</span>
             <br />
             <span>occupation: {patient.occupation}</span>
+            {error && <Alert severity="error">{error}</Alert>}
+
+            <AddEntriesForm
+                patient={patient}
+                setPatient={setPatient}
+                setError={setError}
+                diagnosis={props.diagnosis}
+                setRefresh={setRefresh}
+            />
             {patient.entries ? <Entries entries={patient.entries} /> : null}
         </div>
     );

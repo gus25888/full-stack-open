@@ -185,16 +185,11 @@ const parseDischarge = (
 };
 
 const parseDiagnosisCodes = (object: unknown): Array<Diagnose["code"]> => {
-    if (
-        !object ||
-        typeof object !== "object" ||
-        !("diagnosisCodes" in object)
-    ) {
-        // we will just trust the data to be in correct form
+    if (!object || typeof object !== "object" || !(object instanceof Array)) {
         return [] as Array<Diagnose["code"]>;
     }
 
-    return object.diagnosisCodes as Array<Diagnose["code"]>;
+    return object as Array<Diagnose["code"]>;
 };
 
 export { toNewPatient, toNewEntry };

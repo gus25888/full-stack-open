@@ -1,14 +1,15 @@
-import { Entry, HealthCheckRating, HealthCheckRatingColor } from "../../types";
+import {
+    Entry,
+    EntryType,
+    HealthCheckRating,
+    HealthCheckRatingColor,
+} from "../../types";
 import FavoriteIcon from "@mui/icons-material/Favorite";
+import { assertNever } from "../../utils";
 
 interface Props {
     entry: Entry;
 }
-const assertNever = (value: never): never => {
-    throw new Error(
-        `Unhandled discriminated union member: ${JSON.stringify(value)}`
-    );
-};
 
 const EntryDetails = (props: Props) => {
     if (!props.entry) {
@@ -23,7 +24,7 @@ const EntryDetails = (props: Props) => {
     let entryDetailsContent: JSX.Element;
 
     switch (props.entry.type) {
-        case "HealthCheck":
+        case EntryType.HealthCheck:
             entryDetailsContent = (
                 <div style={entryDetailsClass}>
                     <FavoriteIcon
@@ -39,7 +40,7 @@ const EntryDetails = (props: Props) => {
                 </div>
             );
             break;
-        case "Hospital":
+        case EntryType.Hospital:
             entryDetailsContent = (
                 <div style={entryDetailsClass}>
                     <span>{`discharge date: ${props.entry.discharge.date}`}</span>
@@ -48,7 +49,7 @@ const EntryDetails = (props: Props) => {
                 </div>
             );
             break;
-        case "OccupationalHealthcare":
+        case EntryType.OccupationalHealthcare:
             entryDetailsContent = (
                 <div style={entryDetailsClass}>
                     <span>{`Employer name: ${props.entry.employerName}`}</span>

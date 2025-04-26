@@ -32,7 +32,6 @@ const addEntry = (newEntry: NewEntry, patientId: string) => {
     const patientToUpdate = patients.find(
         (patient) => patient.id === patientId
     );
-
     patientToUpdate?.entries.push(entryAdded);
     return entryAdded;
 };

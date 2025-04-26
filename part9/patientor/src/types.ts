@@ -10,6 +10,12 @@ export enum Gender {
     Other = "other",
 }
 
+export enum EntryType {
+    HealthCheck = "HealthCheck",
+    OccupationalHealthcare = "OccupationalHealthcare",
+    Hospital = "Hospital",
+}
+
 export interface BaseEntry {
     id: string;
     description: string;
@@ -33,12 +39,12 @@ export enum HealthCheckRatingColor {
 }
 
 interface HealthCheckEntry extends BaseEntry {
-    type: "HealthCheck";
+    type: EntryType.HealthCheck;
     healthCheckRating: HealthCheckRating;
 }
 
 interface OccupationalHealthCareEntry extends BaseEntry {
-    type: "OccupationalHealthcare";
+    type: EntryType.OccupationalHealthcare;
     employerName: string;
     sickLeave?: {
         startDate: string;
@@ -47,7 +53,7 @@ interface OccupationalHealthCareEntry extends BaseEntry {
 }
 
 interface HospitalEntry extends BaseEntry {
-    type: "Hospital";
+    type: EntryType.Hospital;
     discharge: {
         date: string;
         criteria: string;
@@ -70,3 +76,9 @@ export interface Patient {
 }
 
 export type PatientFormValues = Omit<Patient, "id" | "entries">;
+
+type UnionOmit<T, K extends string | number | symbol> = T extends unknown
+    ? Omit<T, K>
+    : never;
+
+export type EntryFormValues = UnionOmit<Entry, "id">;
