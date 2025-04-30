@@ -6,6 +6,10 @@ interface Props {
     entries: Entry[];
 }
 
+const spanStyle = {
+    display: "block",
+};
+
 const Entries = (props: Props) => {
     if (
         !props.entries ||
@@ -24,16 +28,15 @@ const Entries = (props: Props) => {
             <h3>entries</h3>
             {props.entries.map((entry) => (
                 <div key={entry.id} style={entriesStyle}>
-                    <span>{entry.date}</span>
-                    <br />
+                    <span style={spanStyle}>{entry.date}</span>
                     <span style={{ fontStyle: "italic" }}>
                         {entry.description}
                     </span>
-                    <br />
                     <DiagnosisList diagnosisCodes={entry.diagnosisCodes} />
-                    <br />
                     <EntryDetails entry={entry} />
-                    <span>{`diagnosed by ${entry.specialist}`}</span>
+                    <span style={spanStyle}>
+                        {`diagnosed by ${entry.specialist}`}
+                    </span>
                 </div>
             ))}
         </div>

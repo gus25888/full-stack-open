@@ -141,7 +141,12 @@ const isHealthCheckRating = (param: number): param is HealthCheckRating => {
 };
 
 const parseHealthCheckRating = (rating: unknown) => {
-    if (!rating || typeof rating !== "number" || !isHealthCheckRating(rating)) {
+    if (
+        rating === undefined ||
+        rating === null ||
+        typeof rating !== "number" ||
+        !isHealthCheckRating(rating)
+    ) {
         throw new Error(
             "healthCheckRating must be one of " +
                 Object.values(HealthCheckRating)

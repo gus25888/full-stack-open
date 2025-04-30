@@ -13,15 +13,16 @@ import { Add, Delete } from "@mui/icons-material";
 import { SyntheticEvent, useState } from "react";
 import axios from "axios";
 
-import patientService from "../../services/patients";
 import {
     Diagnose,
     EntryFormValues,
     EntryType,
-    HealthCheckRating,
+    // HealthCheckRating,
     Patient,
 } from "../../types";
-import { assertNever } from "../../utils";
+import patientService from "../../services/patients";
+import ExtraFields from "./ExtraFields";
+import { EMPTY_VALUE } from "../../constants";
 
 interface Props {
     patient: Patient;
@@ -31,17 +32,8 @@ interface Props {
     diagnosis: Diagnose[];
 }
 
-interface ExtraFieldsProps {
-    type: EntryType;
-}
-
 interface EntryTypeOption {
     value: EntryType;
-    label: string;
-}
-
-interface HealthCheckRatingOption {
-    value: HealthCheckRating;
     label: string;
 }
 
@@ -52,8 +44,7 @@ const entryTypeOptions: EntryTypeOption[] = Object.values(EntryType).map(
     })
 );
 
-// TODO: Revisar porque los inputs de texto "Extra" pierden el focus después de una letra.
-// TODO: Revisar como poner valores neutros para los selects implementados (Health Check y Type).
+const labelStyle = { marginTop: 10 };
 
 const AddEntriesForm = (props: Props) => {
     const { patient, setPatient, setError, diagnosis, setRefresh } = props;
@@ -65,15 +56,13 @@ const AddEntriesForm = (props: Props) => {
     const [type, setType] = useState<EntryType>(EntryType.HealthCheck);
 
     const [healthCheckRating, setHealthCheckRating] =
-        useState<HealthCheckRating>(HealthCheckRating.Healthy);
+        useState<number>(EMPTY_VALUE);
 
     const [employerName, setEmployerName] = useState<string>("");
     const [sickLeaveStart, setSickLeaveStart] = useState<string>("");
     const [sickLeaveEnd, setSickLeaveEnd] = useState<string>("");
     const [dischargeDate, setDischargeDate] = useState<string>("");
     const [dischargeCriteria, setDischargeCriteria] = useState<string>("");
-
-    const labelStyle = { marginTop: 10 };
 
     const onEntryTypeChange = (event: SelectChangeEvent<string>) => {
         event.preventDefault();
@@ -85,12 +74,6 @@ const AddEntriesForm = (props: Props) => {
             if (entryType) {
                 setType(entryType);
             }
-        }
-    };
-    const onHealthCheckRatingChange = (event: SelectChangeEvent<number>) => {
-        event.preventDefault();
-        if (event.target.value && typeof event.target.value === "number") {
-            setHealthCheckRating(event.target.value);
         }
     };
 
@@ -108,7 +91,7 @@ const AddEntriesForm = (props: Props) => {
         setSpecialist("");
         setDiagnosisCodes([]);
         setType(EntryType.HealthCheck);
-        setHealthCheckRating(HealthCheckRating.Healthy);
+        setHealthCheckRating(EMPTY_VALUE);
         setEmployerName("");
         setSickLeaveStart("");
         setSickLeaveEnd("");
@@ -123,7 +106,7 @@ const AddEntriesForm = (props: Props) => {
         setError: React.Dispatch<React.SetStateAction<string | undefined>>
     ) => {
         try {
-            setError(undefined);
+            setError("");
             const patientId = patient.id;
             const entry = await patientService.createEntry(values, patientId);
             patient.entries.concat(entry);
@@ -155,7 +138,14 @@ const AddEntriesForm = (props: Props) => {
 
     const addEntry = (event: SyntheticEvent) => {
         event.preventDefault();
-        console.log({ diagnosisCodes });
+
+        if (
+            typeof healthCheckRating === "undefined" ||
+            (typeof healthCheckRating === "number" && healthCheckRating === -1)
+        ) {
+            setError("Health Check Rating is required");
+            return;
+        }
 
         const newEntry: EntryFormValues = {
             description,
@@ -175,136 +165,6 @@ const AddEntriesForm = (props: Props) => {
             },
         };
         submitNewEntry(newEntry, patient, setPatient, setError);
-    };
-
-    const ExtraFields = (props: ExtraFieldsProps) => {
-        const generateRatingOptions = (values: number[], labels: string[]) => {
-            const length = values.length;
-            const result = [];
-            for (let i = 0; i < length; i++) {
-                result.push({
-                    value: values[i],
-                    label: labels[i],
-                });
-            }
-
-            return result;
-        };
-
-        const healthCheckRatingValues: number[] = Object.values(
-            HealthCheckRating
-        ).filter((k: string | number) => typeof k === "number");
-
-        const healthCheckRatingLabels: string[] = Object.values(
-            HealthCheckRating
-        ).filter((k: string | number) => typeof k === "string");
-
-        const healthCheckRatingOptions: HealthCheckRatingOption[] =
-            generateRatingOptions(
-                healthCheckRatingValues,
-                healthCheckRatingLabels
-            );
-
-        switch (props.type) {
-            case EntryType.HealthCheck:
-                return (
-                    <>
-                        <InputLabel style={labelStyle}>
-                            Health Check Rating
-                        </InputLabel>
-                        <Select
-                            required
-                            value={healthCheckRating}
-                            onChange={onHealthCheckRatingChange}
-                        >
-                            {healthCheckRatingOptions.map((option) => (
-                                <MenuItem
-                                    key={option.label}
-                                    value={option.value}
-                                >
-                                    {option.label}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                        <FormHelperText>Required</FormHelperText>
-                    </>
-                );
-
-            case EntryType.Hospital:
-                return (
-                    <>
-                        <InputLabel style={labelStyle}>
-                            Discharge Criteria
-                        </InputLabel>
-                        <TextField
-                            required
-                            fullWidth
-                            value={dischargeCriteria}
-                            onChange={({ target }) =>
-                                setDischargeCriteria(target.value)
-                            }
-                        />
-                        <FormHelperText>Required</FormHelperText>
-                        <InputLabel style={labelStyle}>
-                            Discharge Date
-                        </InputLabel>
-                        <TextField
-                            required
-                            type="date"
-                            placeholder="YYYY-MM-DD"
-                            value={dischargeDate}
-                            onChange={({ target }) =>
-                                setDischargeDate(target.value)
-                            }
-                        />
-                        <FormHelperText>Required</FormHelperText>
-                    </>
-                );
-
-            case EntryType.OccupationalHealthcare:
-                return (
-                    <>
-                        <InputLabel style={labelStyle}>
-                            Employer Name
-                        </InputLabel>
-                        <TextField
-                            required
-                            fullWidth
-                            value={employerName}
-                            onChange={({ target }) =>
-                                setEmployerName(target.value)
-                            }
-                        />
-                        <FormHelperText>Required</FormHelperText>
-
-                        <InputLabel style={labelStyle}>
-                            Sick Leave Start
-                        </InputLabel>
-                        <TextField
-                            type="date"
-                            placeholder="YYYY-MM-DD"
-                            value={sickLeaveStart}
-                            onChange={({ target }) =>
-                                setSickLeaveStart(target.value)
-                            }
-                        />
-
-                        <InputLabel style={labelStyle}>
-                            Sick Leave End
-                        </InputLabel>
-                        <TextField
-                            type="date"
-                            placeholder="YYYY-MM-DD"
-                            value={sickLeaveEnd}
-                            onChange={({ target }) =>
-                                setSickLeaveEnd(target.value)
-                            }
-                        />
-                    </>
-                );
-            default:
-                return assertNever(props.type);
-        }
     };
 
     if (!patient) {
@@ -365,9 +225,9 @@ const AddEntriesForm = (props: Props) => {
 
                 <InputLabel style={labelStyle}>Diagnosis Codes</InputLabel>
                 <Select
-                    required
                     fullWidth
                     multiple
+                    displayEmpty
                     value={diagnosisCodes}
                     onChange={onDiagnosisCodeChange}
                 >
@@ -380,7 +240,21 @@ const AddEntriesForm = (props: Props) => {
                         </MenuItem>
                     ))}
                 </Select>
-                <ExtraFields type={type} />
+                <ExtraFields
+                    type={type}
+                    healthCheckRating={healthCheckRating}
+                    setHealthCheckRating={setHealthCheckRating}
+                    dischargeDate={dischargeDate}
+                    setDischargeDate={setDischargeDate}
+                    dischargeCriteria={dischargeCriteria}
+                    setDischargeCriteria={setDischargeCriteria}
+                    employerName={employerName}
+                    setEmployerName={setEmployerName}
+                    sickLeaveStart={sickLeaveStart}
+                    setSickLeaveStart={setSickLeaveStart}
+                    sickLeaveEnd={sickLeaveEnd}
+                    setSickLeaveEnd={setSickLeaveEnd}
+                />
 
                 <Grid style={{ marginTop: "2em" }}>
                     <Grid item>

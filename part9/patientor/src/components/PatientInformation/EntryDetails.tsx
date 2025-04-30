@@ -16,9 +16,13 @@ const EntryDetails = (props: Props) => {
         return null;
     }
 
-    const entryDetailsClass = {
+    const entryDetailsStyle = {
         padding: "0.1em",
         margin: "0.1em",
+    };
+
+    const spanStyle = {
+        display: "block",
     };
 
     let entryDetailsContent: JSX.Element;
@@ -26,7 +30,7 @@ const EntryDetails = (props: Props) => {
     switch (props.entry.type) {
         case EntryType.HealthCheck:
             entryDetailsContent = (
-                <div style={entryDetailsClass}>
+                <div style={entryDetailsStyle}>
                     <FavoriteIcon
                         htmlColor={
                             HealthCheckRatingColor[
@@ -42,23 +46,29 @@ const EntryDetails = (props: Props) => {
             break;
         case EntryType.Hospital:
             entryDetailsContent = (
-                <div style={entryDetailsClass}>
-                    <span>{`discharge date: ${props.entry.discharge.date}`}</span>
-                    <br />
-                    <span>{`discharge criteria: ${props.entry.discharge.criteria}`}</span>
+                <div style={entryDetailsStyle}>
+                    <span style={spanStyle}>
+                        {`discharge date: ${props.entry.discharge.date}`}
+                    </span>
+                    <span style={spanStyle}>
+                        {`discharge criteria: ${props.entry.discharge.criteria}`}
+                    </span>
                 </div>
             );
             break;
         case EntryType.OccupationalHealthcare:
             entryDetailsContent = (
-                <div style={entryDetailsClass}>
+                <div style={entryDetailsStyle}>
                     <span>{`Employer name: ${props.entry.employerName}`}</span>
                     {props.entry.sickLeave ? (
                         <>
                             <br />
-                            <span>{`Sick Leave Start: ${props.entry.sickLeave?.startDate}`}</span>
-                            <br />
-                            <span>{`Sick Leave End: ${props.entry.sickLeave?.endDate}`}</span>
+                            <span
+                                style={spanStyle}
+                            >{`Sick Leave Start: ${props.entry.sickLeave?.startDate}`}</span>
+                            <span
+                                style={spanStyle}
+                            >{`Sick Leave End: ${props.entry.sickLeave?.endDate}`}</span>
                         </>
                     ) : null}
                 </div>
