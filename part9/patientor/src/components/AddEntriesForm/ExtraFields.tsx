@@ -107,15 +107,16 @@ const ExtraFields = (props: ExtraFieldsProps) => {
                     </InputLabel>
                     <RadioGroup
                         row
-                        aria-labelledby="demo-row-radio-buttons-group-label"
-                        name="row-radio-buttons-group"
+                        key="healthCheckRating"
+                        aria-labelledby="healthCheckRating-radio-buttons-group-label"
+                        name="healthCheckRating-radio-buttons-group"
                         aria-required
                         value={healthCheckRating}
                         onChange={onHealthCheckRatingChange}
                     >
                         <>
                             <FormControlLabel
-                                key={"Not Selected"}
+                                key={"not_selected"}
                                 value={EMPTY_VALUE}
                                 control={<Radio />}
                                 label={""}

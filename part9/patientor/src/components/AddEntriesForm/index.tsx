@@ -13,13 +13,7 @@ import { Add, Delete } from "@mui/icons-material";
 import { SyntheticEvent, useState } from "react";
 import axios from "axios";
 
-import {
-    Diagnose,
-    EntryFormValues,
-    EntryType,
-    // HealthCheckRating,
-    Patient,
-} from "../../types";
+import { Diagnose, EntryFormValues, EntryType, Patient } from "../../types";
 import patientService from "../../services/patients";
 import ExtraFields from "./ExtraFields";
 import { EMPTY_VALUE } from "../../constants";
@@ -140,8 +134,10 @@ const AddEntriesForm = (props: Props) => {
         event.preventDefault();
 
         if (
-            typeof healthCheckRating === "undefined" ||
-            (typeof healthCheckRating === "number" && healthCheckRating === -1)
+            type === EntryType.HealthCheck &&
+            (typeof healthCheckRating === "undefined" ||
+                (typeof healthCheckRating === "number" &&
+                    healthCheckRating === -1))
         ) {
             setError("Health Check Rating is required");
             return;
@@ -155,10 +151,13 @@ const AddEntriesForm = (props: Props) => {
             type,
             healthCheckRating,
             employerName,
-            sickLeave: {
-                startDate: sickLeaveStart,
-                endDate: sickLeaveEnd,
-            },
+            sickLeave:
+                sickLeaveStart && sickLeaveEnd
+                    ? {
+                          startDate: sickLeaveStart,
+                          endDate: sickLeaveEnd,
+                      }
+                    : undefined,
             discharge: {
                 date: dischargeDate,
                 criteria: dischargeCriteria,
@@ -178,6 +177,7 @@ const AddEntriesForm = (props: Props) => {
                 marginBottom: "4em",
                 border: "1px dotted black",
                 borderRadius: "4px",
+                padding: "0.5em",
             }}
         >
             <form onSubmit={addEntry}>
